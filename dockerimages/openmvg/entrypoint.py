@@ -100,34 +100,37 @@ class aStep:
 class stepsStore :
     def __init__(self):
         self.steps_data=[
-            [   "Intrinsics analysis",
-                os.path.join(OPENMVG_BIN,"openMVG_main_SfMInit_ImageListing"),
-                ["-i", "%input_dir%", "-o", "%matches_dir%", "-d", "%camera_file_params%", "-f", "2500"] ],
-            [   "Compute features",
-                os.path.join(OPENMVG_BIN,"openMVG_main_ComputeFeatures"),
-                ["-i", "%matches_dir%/sfm_data.json", "-o", "%matches_dir%", "-m", "SIFT", "-n", "3"] ],
-            [   "Compute matches",
-                os.path.join(OPENMVG_BIN, "openMVG_main_ComputeMatches"),
-                ["-i", "%matches_dir%/sfm_data.json", "-o", "%matches_dir%"] ],
-            [   "Incremental reconstruction",
-                os.path.join(OPENMVG_BIN, "openMVG_main_IncrementalSfM"),
-                ["-i", "%matches_dir%/sfm_data.json", "-m", "%matches_dir%", "-o", "%reconstruction_dir%"] ],
-            [   "Global reconstruction",       
-                os.path.join(OPENMVG_BIN, "openMVG_main_GlobalSfM"),
-                ["-i", "%matches_dir%/sfm_data.json", "-m", "%matches_dir%", "-o", "%reconstruction_dir%"]],
-            [   "Colorize Structure",
-                os.path.join(OPENMVG_BIN,"openMVG_main_ComputeSfM_DataColor"),
-                ["-i", "%reconstruction_dir%/sfm_data.bin", "-o", "%reconstruction_dir%/colorized.ply"] ],
-            [   "Structure from Known Poses",
-                os.path.join(OPENMVG_BIN,"openMVG_main_ComputeStructureFromKnownPoses"),
-                ["-i", "%reconstruction_dir%/sfm_data.bin", "-m", "%matches_dir%", "-f", "%matches_dir%/matches.f.bin", "-o", "%reconstruction_dir%/robust.bin"]],
-            [   "Colorized robust triangulation",
-                os.path.join(OPENMVG_BIN,"openMVG_main_ComputeSfM_DataColor"),
-                ["-i", "%reconstruction_dir%/robust.bin", "-o", "%reconstruction_dir%/robust_colorized.ply"]],
-            [   "Export to openMVS",
-                os.path.join(OPENMVG_BIN,"openMVG_main_openMVG2openMVS"),
-                ["-i", "%reconstruction_dir%/sfm_data.bin", "-o", "%mvs_dir%/scene.mvs","-d","%mvs_dir%"]]
-            ]
+                            [   "Intrinsics analysis",
+                                os.path.join(OPENMVG_BIN,"openMVG_main_SfMInit_ImageListing"),
+                                ["-i", "%input_dir%", "-o", "%matches_dir%", "-d", "%camera_file_params%", "-f", "2500"] ],
+                            [   "Compute features",
+                                os.path.join(OPENMVG_BIN,"openMVG_main_ComputeFeatures"),
+                                ["-i", "%matches_dir%/sfm_data.json", "-o", "%matches_dir%", "-m", "SIFT", "-n", "3"] ],
+                            [   "Compute matches",
+                                os.path.join(OPENMVG_BIN, "openMVG_main_ComputeMatches"),
+                                ["-i", "%matches_dir%/sfm_data.json", "-o", "%matches_dir%"] ],
+                            [   "Incremental reconstruction",
+                                os.path.join(OPENMVG_BIN, "openMVG_main_IncrementalSfM"),
+                                ["-i", "%matches_dir%/sfm_data.json", "-m", "%matches_dir%", "-o", "%reconstruction_dir%"] ],
+                            [   "Global reconstruction",       
+                                os.path.join(OPENMVG_BIN, "openMVG_main_GlobalSfM"),
+                                ["-i", "%matches_dir%/sfm_data.json", "-m", "%matches_dir%", "-o", "%reconstruction_dir%"]],
+                            [   "Colorize Structure",
+                                os.path.join(OPENMVG_BIN,"openMVG_main_ComputeSfM_DataColor"),
+                                ["-i", "%reconstruction_dir%/sfm_data.bin", "-o", "%reconstruction_dir%/colorized.ply"] ],
+                            [   "Structure from Known Poses",
+                                os.path.join(OPENMVG_BIN,"openMVG_main_ComputeStructureFromKnownPoses"),
+                                ["-i", "%reconstruction_dir%/sfm_data.bin", "-m", "%matches_dir%", "-f", "%matches_dir%/matches.f.bin", "-o", "%reconstruction_dir%/robust.bin"]],
+                            [   "Colorized robust triangulation",
+                                os.path.join(OPENMVG_BIN,"openMVG_main_ComputeSfM_DataColor"),
+                                ["-i", "%reconstruction_dir%/robust.bin", "-o", "%reconstruction_dir%/robust_colorized.ply"]],
+                            [   "Export to openMVS",
+                                os.path.join(OPENMVG_BIN,"openMVG_main_openMVG2openMVS"),
+                                ["-i", "%reconstruction_dir%/sfm_data.bin", "-o", "%mvs_dir%/scene.mvs","-d","%mvs_dir%"]],
+                            [   "Export to Web GL", 
+                                os.path.join(OPENMVG_BIN, "openMVG_main_openMVG2WebGL"),
+                                ["-i", "%reconstruction_dir%/sfm_data.bin", "-o", "%mvs_dir%" ]]
+                        ]
 
     def __getitem__(self, indice):
         return aStep(*self.steps_data[indice])
@@ -161,7 +164,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('input_dir', help="the directory wich contains the pictures set.")
 parser.add_argument('output_dir', help="the directory wich will contain the resulting files.")
 parser.add_argument('-f','--first_step', type=int, default=0, help="the first step to process")
-parser.add_argument('-l','--last_step', type=int, default=11, help="the last step to process" )
+parser.add_argument('-l','--last_step', type=int, default=8, help="the last step to process" )
 
 group = parser.add_argument_group('Passthrough',description="Option to be passed to command lines (remove - in front of option names)\r\ne.g. --1 p ULTRA to use the ULTRA preset in openMVG_main_ComputeFeatures")
 for n in range(steps.length()) :
@@ -197,10 +200,10 @@ mkdir_ine(conf.mvs_dir)
 steps.apply_conf(conf)
 
 ## WALK
-print("# Using input dir  :  %s" % conf.input_dir)
-print("#       output_dir :  %s" % conf.output_dir)
-print("# First step  :  %i" % conf.first_step)
-print("# Last step :  %i" % conf.last_step)
+print "# Using input dir  :  %s" % conf.input_dir
+print "#       output_dir :  %s" % conf.output_dir
+print "# First step  :  %i" % conf.first_step
+print "# Last step :  %i" % conf.last_step
 for cstep in range(conf.first_step, conf.last_step+1):
     printout("#%i. %s" % (cstep, steps[cstep].info), effect=INVERSE)
 
@@ -216,18 +219,16 @@ for cstep in range(conf.first_step, conf.last_step+1):
 
     #Remove steps[cstep].opt options now defined in opt
     for anOpt in steps[cstep].opt :
-        if anOpt in opt :
-            idx=steps[cstep].opt.index(anOpt)
-            if DEBUG :
-                print('#\t'+'Remove '+ str(anOpt) + ' from defaults options at id ' + str(idx))
-                del steps[cstep].opt[idx:idx+2]
+		if anOpt in opt :
+			idx=steps[cstep].opt.index(anOpt)
+			if DEBUG :
+				print '#\t'+'Remove '+ str(anOpt) + ' from defaults options at id ' + str(idx)
+			del steps[cstep].opt[idx:idx+2]
 
     cmdline = [steps[cstep].cmd] + steps[cstep].opt + opt
-
-    print("here: %s" % cmdline)
 
     if not DEBUG :
         pStep = subprocess.Popen(cmdline)
         pStep.wait()
     else:
-        print('\t'+' '.join(cmdline))
+        print '\t'+' '.join(cmdline)

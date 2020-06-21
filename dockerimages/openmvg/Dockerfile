@@ -1,4 +1,4 @@
-FROM 7a4301c46b85
+FROM romangherta/openmvg
 COPY . /tmp
 WORKDIR /tmp
 RUN mkdir /tmp/in && mkdir /tmp/out

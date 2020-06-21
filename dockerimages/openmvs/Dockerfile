@@ -1,4 +1,4 @@
-FROM f796ea855fcd
+FROM romangherta/openmvs
 COPY . /tmp
 WORKDIR /tmp
 ENTRYPOINT ["python","entrypoint.py", "/tmp/in", "/tmp/out"] 
