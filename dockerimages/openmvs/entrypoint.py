@@ -93,7 +93,7 @@ def find(afile):
 # Try to find openMVG and openMVS binaries in PATH
 OPENMVS_BIN = '/usr/local/bin/OpenMVS'
 
-PRESET = {'SEQUENTIAL': [0, 1, 2, 3, 9, 10, 11, 12, 13],
+PRESET = {'SEQUENTIAL': [0, 1, 2, 3],
           'GLOBAL': [0, 1, 2, 4, 9, 10, 11, 12, 13],
           'MVG_SEQ': [0, 1, 2, 3, 5, 6, 7],
           'MVG_GLOBAL': [0, 1, 2, 4, 5, 6, 7],
@@ -156,24 +156,18 @@ class AStep:
 class StepsStore:
     def __init__(self):
         self.steps_data = [
-            ["Densify point cloud",          # 10
+            ["Densify point cloud",          # 0
              os.path.join(OPENMVS_BIN, "DensifyPointCloud"),
              ["scene.mvs", "--dense-config-file", "Densify.ini", "--resolution-level", "1", "-w", "%mvs_dir%"]],
-            ["Reconstruct the mesh",         # 11
+            ["Reconstruct the mesh",         # 1
              os.path.join(OPENMVS_BIN, "ReconstructMesh"),
              ["scene_dense.mvs", "-w", "%mvs_dir%"]],
-            ["Refine the mesh",              # 12
+            ["Refine the mesh",              # 2
              os.path.join(OPENMVS_BIN, "RefineMesh"),
              ["scene_dense_mesh.mvs", "--scales", "2", "-w", "%mvs_dir%"]],
-            ["Texture the mesh",             # 13
+            ["Texture the mesh",             # 3
              os.path.join(OPENMVS_BIN, "TextureMesh"),
-             ["scene_dense_mesh_refine.mvs", "-w", "%mvs_dir%"]],
-            ["Estimate disparity-maps",      # 14
-             os.path.join(OPENMVS_BIN, "DensifyPointCloud"),
-             ["scene.mvs", "--dense-config-file", "Densify.ini", "--fusion-mode", "-1", "-w", "%mvs_dir%"]],
-            ["Fuse disparity-maps",          # 15
-             os.path.join(OPENMVS_BIN, "DensifyPointCloud"),
-             ["scene.mvs", "--dense-config-file", "Densify.ini", "--fusion-mode", "-2", "-w", "%mvs_dir%"]]
+             ["scene_dense_mesh_refine.mvs", "-w", "%mvs_dir%"]]
             ]
 
     def __getitem__(self, indice):
@@ -265,11 +259,6 @@ elif not CONF.steps:
 print("# Using input dir:  %s" % CONF.input_dir)
 print("#      output dir:  %s" % CONF.output_dir)
 print("# Steps:  %s" % str(CONF.steps))
-
-if 2 in CONF.steps:    # ComputeMatches
-    if 4 in CONF.steps:  # GlobalReconstruction
-        # Set the geometric_model of ComputeMatches to Essential
-        STEPS[2].opt.extend(["-g", "e"])
 
 for cstep in CONF.steps:
     printout("#%i. %s" % (cstep, STEPS[cstep].info), effect=INVERSE)
