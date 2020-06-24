@@ -54,6 +54,7 @@ OPENMVG_BIN = "/opt/openMVG_Build/install/bin/"
 
 # Indicate the openMVG camera sensor width directory
 CAMERA_SENSOR_WIDTH_DIRECTORY = "/opt/openMVG_Build/install/share/openMVG/"
+CAMERA_FOCAL = os.environ['CAMERA_FOCAL']
 
 DEBUG=False
 
@@ -102,13 +103,13 @@ class stepsStore :
         self.steps_data=[
                             [   "Intrinsics analysis",
                                 os.path.join(OPENMVG_BIN,"openMVG_main_SfMInit_ImageListing"),
-                                ["-i", "%input_dir%", "-o", "%matches_dir%", "-d", "%camera_file_params%", "-f", "2500"] ],
+                                ["-i", "%input_dir%", "-o", "%matches_dir%", "-d", "%camera_file_params%", "-f", CAMERA_FOCAL ] ],
                             [   "Compute features",
                                 os.path.join(OPENMVG_BIN,"openMVG_main_ComputeFeatures"),
-                                ["-i", "%matches_dir%/sfm_data.json", "-o", "%matches_dir%", "-m", "SIFT", "-n", "3"] ],
+                                ["-i", "%matches_dir%/sfm_data.json", "-o", "%matches_dir%", "-p", "HIGH"] ],
                             [   "Compute matches",
                                 os.path.join(OPENMVG_BIN, "openMVG_main_ComputeMatches"),
-                                ["-i", "%matches_dir%/sfm_data.json", "-o", "%matches_dir%"] ],
+                                ["-i", "%matches_dir%/sfm_data.json", "-o", "%matches_dir%", "-v", "1"] ],
                             [   "Incremental reconstruction",
                                 os.path.join(OPENMVG_BIN, "openMVG_main_IncrementalSfM"),
                                 ["-i", "%matches_dir%/sfm_data.json", "-m", "%matches_dir%", "-o", "%reconstruction_dir%"] ],
