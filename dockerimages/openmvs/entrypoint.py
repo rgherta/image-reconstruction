@@ -164,7 +164,7 @@ class StepsStore:
              ["scene_dense.mvs", "-w", "%mvs_dir%"]],
             ["Refine the mesh",              # 2
              os.path.join(OPENMVS_BIN, "RefineMesh"),
-             ["scene_dense_mesh.mvs", "--scales", "2", "-w", "%mvs_dir%"]],
+             ["scene_dense_mesh.mvs", "--scales", "1", "-w", "%mvs_dir%"]],
             ["Texture the mesh",             # 3
              os.path.join(OPENMVS_BIN, "TextureMesh"),
              ["scene_dense_mesh_refine.mvs", "-w", "%mvs_dir%"]]
